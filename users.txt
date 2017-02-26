@@ -1,0 +1,59 @@
+ping google.co.in
+  206  berks install
+  207  vim Berksfile 
+  208  berks install
+  209  berks upload
+  210  cd data_bags/
+  211  mkdir cs_users
+  212  cd cs_users/
+  213  vim jaga.json
+  214  vim srinu.json
+  215  knife data bag create cs_users
+  216  knife data bag from file  cs_users srinu.json 
+  217  vim srinu.json
+  218  knife data bag from file  cs_users srinu.json 
+  219  vim srinu.json
+  220  knife data bag from file  cs_users srinu.json 
+  221  knife node run_list add jagawork 'recipe[cs_users]'
+  222  chef-client
+  223  knife role delete webserver
+  224  knife node run_list delete jagawork 'recipe[webserver]'
+  225  knife  run_list delete jagawork 'recipe[webserver]'
+  226  knife  run_list remove jagawork 'recipe[webserver]'
+  227  knife node  run_list remove jagawork 'recipe[webserver]'
+  228  chef-client
+  229  grep srinu /etc/passwd
+data bag
+{
+"id" : "srinu",
+"comment" : "srinivas",
+"groups" : [ "cloud" ],
+"ssh_keys" : ["ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDSLJyz3S9L/p9MclqJmX/Hb04iEwsbRXkAeqwxSedZt4z9OPDaQax9WwQ06VDvxXedEiPr4bx30Trk1BQX/bh2bPsN+KMHnU9ueth/uVNo41QyCVlOPB7C3Mn+X8OxzzD5C87+rx3LrLctu+rj1g55TKe26VnFSId8dvwuOqhpX0AaWp3u2uNywnSZRWQjJcGEyxs6to/g6VbZTznRu5kLmTb8cQwWGgQlveh7lkTQcTOUh/nz4RhICYELn+wbX6tkocrBjv5uOtijWlMRj7B7lLbJNJO9Xd1mMEFwRtfPos7G376Ul3Zodh4jgslPFXbUGhTuE9JB45T3RT6gY1Mh jaga@localhost.localdomain"],
+"password" : "pass"
+}
+
+default.rb
+#
+# Cookbook Name:: cs_users
+# Recipe:: default
+#
+# Copyright 2017, YOUR_COMPANY_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+include_recipe 'users'
+users_manage 'cloud' do
+group_id 2001
+action [ :remove, :create ]
+data_bag 'cs_users'
+end
+
+metadata
+
+maintainer       'YOUR_COMPANY_NAME'
+maintainer_email 'YOUR_EMAIL'
+license          'All rights reserved'
+description      'Installs/Configures cs_users'
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+version          '0.1.0'
+depends		 'users' ##needs to write into the file
